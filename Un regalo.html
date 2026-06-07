@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Yana & Pablo – Invitación</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:16px;-webkit-text-size-adjust:100%;}
+body{
+  width:100%;min-height:100vh;
+  background:linear-gradient(160deg,#ffe8c8 0%,#ffd4a0 30%,#ffebd4 60%,#fcd9b0 100%);
+  display:flex;justify-content:center;align-items:flex-start;
+  font-family:'Cormorant Garamond',serif;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+/* Subtle texture overlay */
+body::before{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;
+  background-image:radial-gradient(circle at 20% 20%,rgba(255,220,160,0.35) 0%,transparent 50%),
+    radial-gradient(circle at 80% 80%,rgba(255,190,120,0.25) 0%,transparent 50%),
+    radial-gradient(circle at 60% 10%,rgba(255,230,180,0.3) 0%,transparent 40%);
+  z-index:0;
+}
+#app{
+  width:100%;max-width:480px;min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;
+  padding:30px 16px 60px;
+  position:relative;z-index:1;
+}
+
+/* ── PANTALLA 1: Selección ── */
+#select-screen{display:flex;flex-direction:column;align-items:center;gap:18px;padding-top:16px;width:100%;}
+.sel-title{font-family:'Great Vibes',cursive;font-size:clamp(26px,8vw,36px);color:#c05820;text-align:center;font-weight:400;line-height:1.4;text-shadow:0 1px 8px rgba(220,100,30,0.15);}
+.sel-sub{font-family:'Cormorant Garamond',serif;font-size:13px;letter-spacing:3px;text-transform:uppercase;color:#c07840;text-align:center;}
+.guest-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;width:100%;max-width:340px;margin-top:6px;}
+.guest-btn{
+  font-family:'Playfair Display',serif;font-size:15px;color:#7a3010;
+  background:rgba(255,245,235,0.88);border:1px solid #f0c090;border-radius:3px;
+  padding:14px 10px;cursor:pointer;letter-spacing:0.5px;text-align:center;
+  transition:background 0.15s,transform 0.12s,box-shadow 0.15s;
+  min-height:52px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 8px rgba(200,100,20,0.10);
+}
+.guest-btn:active{background:#fde0b8;border-color:#e8a060;transform:scale(0.97);}
+
+/* ── PANTALLA 2: Pregunta secreta ── */
+#question-screen{display:none;flex-direction:column;align-items:center;gap:16px;width:100%;padding-top:10px;}
+.q-back{font-family:'Cormorant Garamond',serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#c08040;background:none;border:none;border-bottom:1px solid #f0c080;padding:4px 10px;cursor:pointer;align-self:flex-start;margin-bottom:4px;}
+.q-envelope-icon{font-size:52px;margin:4px 0;}
+.q-name{font-family:'Great Vibes',cursive;font-size:clamp(28px,9vw,38px);color:#8a3010;text-align:center;}
+.q-label{font-family:'Cormorant Garamond',serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#c08040;text-align:center;}
+.q-question{
+  font-family:'Cormorant Garamond',serif;font-size:clamp(16px,4.5vw,19px);
+  color:#7a3820;text-align:center;line-height:1.6;
+  background:rgba(255,245,230,0.85);border:1px solid #f0c090;border-radius:4px;
+  padding:16px 20px;width:100%;max-width:340px;
+}
+.q-input{
+  font-family:'Cormorant Garamond',serif;font-size:16px;color:#7a3010;
+  background:rgba(255,248,240,0.95);border:1.5px solid #e8b070;border-radius:3px;
+  padding:13px 16px;width:100%;max-width:340px;text-align:center;
+  outline:none;transition:border-color 0.2s;
+  -webkit-appearance:none;appearance:none;
+}
+.q-input:focus{border-color:#d07030;}
+.q-btn{
+  font-family:'Playfair Display',serif;font-size:15px;color:#fff;
+  background:linear-gradient(135deg,#d06020,#e88030);
+  border:none;border-radius:3px;padding:14px 32px;cursor:pointer;
+  letter-spacing:1px;width:100%;max-width:340px;
+  transition:opacity 0.15s,transform 0.12s;min-height:50px;
+  box-shadow:0 4px 16px rgba(210,90,20,0.3);
+}
+.q-btn:active{opacity:0.85;transform:scale(0.98);}
+.q-error{font-family:'Cormorant Garamond',serif;font-size:14px;color:#c06070;text-align:center;min-height:20px;letter-spacing:0.5px;}
+
+/* ── PANTALLA 3: Sobre ── */
+#envelope-scene{display:none;flex-direction:column;align-items:center;gap:0;width:100%;}
+#guest-label{font-family:'Great Vibes',cursive;font-size:clamp(22px,6vw,28px);color:#c05820;margin-bottom:18px;text-align:center;opacity:0;transition:opacity 0.7s;}
+#envelope-wrap{
+  cursor:pointer;position:relative;
+  width:min(300px,86vw);user-select:none;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+#envelope-wrap svg{overflow:visible;width:100%;height:auto;}
+#flap{transform-origin:50% 0%;transition:transform 0.75s cubic-bezier(0.4,0,0.2,1);}
+#envelope-wrap.opening #flap{transform:rotateX(-165deg);}
+#rising-card{
+  position:absolute;top:24%;left:50%;
+  transform:translateX(-50%) translateY(0px);
+  opacity:0;pointer-events:none;width:56%;
+  transition:transform 0.85s 0.5s cubic-bezier(0.2,0.8,0.3,1),opacity 0.65s 0.5s;
+}
+#envelope-wrap.opened #rising-card{transform:translateX(-50%) translateY(-88%);opacity:1;}
+#hint{font-family:'Cormorant Garamond',serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#c08050;margin-top:18px;text-align:center;transition:opacity 0.4s;}
+#envelope-wrap.opening~#hint,#envelope-wrap.opened~#hint{opacity:0;pointer-events:none;}
+
+/* ── PANTALLA 4: Invitación standard ── */
+#invitation-full{display:none;flex-direction:column;align-items:center;width:100%;animation:fadeSlideIn 0.9s ease forwards;}
+@keyframes fadeSlideIn{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:translateY(0);}}
+
+.inv-card{
+  position:relative;width:min(340px,92vw);min-height:700px;
+  background:linear-gradient(160deg,#fff5eb 0%,#ffecd6 35%,#fff0e0 65%,#fde8cc 100%);
+  border-radius:2px;overflow:hidden;
+  box-shadow:0 14px 55px rgba(180,80,20,0.20),0 2px 8px rgba(180,80,20,0.10);
+}
+.inv-fc{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;}
+.inv-cnt{
+  position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;
+  padding:clamp(40px,7vw,56px) clamp(18px,5vw,30px) clamp(36px,6vw,48px);
+  text-align:center;min-height:680px;box-sizing:border-box;height:100%;
+}
+.i-gname-top{font-family:'Playfair Display',serif;font-size:clamp(22px,6vw,28px);font-weight:700;color:#7a3010;margin-bottom:4px;letter-spacing:0.5px;}
+.i-invite-line{font-family:'Cormorant Garamond',serif;font-size:clamp(12px,3.2vw,14px);color:#c07040;letter-spacing:1.5px;margin-bottom:10px;font-style:italic;}
+.i-warmly{font-family:'Great Vibes',cursive;font-size:clamp(14px,4vw,18px);color:#d07030;margin-bottom:3px;}
+.i-sub1{font-family:'Cormorant Garamond',serif;font-size:clamp(9px,2.5vw,11px);letter-spacing:3.5px;text-transform:uppercase;color:#c08050;margin-bottom:2px;}
+.i-name{font-family:'Playfair Display',serif;font-size:clamp(42px,12vw,56px);font-weight:700;color:#7a3010;line-height:1.0;letter-spacing:-1px;}
+.i-amp{font-family:'Great Vibes',cursive;font-size:clamp(28px,8vw,36px);color:#d07030;margin:2px 0;line-height:1.2;}
+.i-divl{width:88px;height:1px;background:linear-gradient(to right,transparent,#e8a060,transparent);margin:11px auto;}
+.i-divls{width:55px;height:1px;background:linear-gradient(to right,transparent,#e8a060,transparent);margin:5px auto 8px;}
+.i-orn{color:#e8a060;font-size:15px;letter-spacing:6px;margin:5px 0;font-family:'Cormorant Garamond',serif;}
+.i-date{font-family:'Playfair Display',serif;font-size:clamp(14px,4vw,17px);letter-spacing:5px;color:#8a4020;margin:7px 0 4px;}
+.i-dot{color:#d07030;}
+.i-at{font-family:'Cormorant Garamond',serif;font-size:clamp(10px,2.8vw,12px);letter-spacing:2px;color:#c08050;font-style:italic;}
+.i-vscr{font-family:'Great Vibes',cursive;font-size:clamp(13px,3.5vw,16px);color:#c08050;margin:4px 0 1px;}
+.i-vname{font-family:'Cormorant Garamond',serif;font-size:clamp(10px,2.8vw,12px);letter-spacing:2px;text-transform:uppercase;color:#a05030;font-weight:600;margin:2px 0;}
+.i-vaddr{font-family:'Cormorant Garamond',serif;font-size:clamp(9px,2.5vw,11px);letter-spacing:2px;text-transform:uppercase;color:#b06040;}
+.i-vcity{font-family:'Cormorant Garamond',serif;font-size:clamp(9.5px,2.8vw,11px);letter-spacing:1px;color:#c08050;font-style:italic;margin-top:1px;}
+.back-btn{margin-top:16px;font-family:'Cormorant Garamond',serif;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:#c08050;background:none;border:none;border-bottom:1px solid #f0c080;cursor:pointer;padding:6px 14px;transition:color 0.2s;}
+.back-btn:active{color:#803010;}
+
+/* ── PANTALLA 5: Carta especial Olya / Anya ── */
+#special-full{display:none;flex-direction:column;align-items:center;width:100%;animation:fadeSlideIn 0.9s ease forwards;}
+.sp-card{
+  position:relative;width:min(340px,92vw);
+  background:linear-gradient(160deg,#1e1408 0%,#2a1c0c 50%,#201608 100%);
+  border-radius:4px;overflow:hidden;
+  box-shadow:0 14px 55px rgba(80,30,5,0.6),0 2px 8px rgba(80,30,5,0.3);
+  padding:36px 24px 40px;text-align:center;
+  border:1px solid rgba(240,160,60,0.3);
+}
+.sp-stars{font-size:22px;letter-spacing:8px;margin-bottom:12px;opacity:0.7;}
+.sp-greeting{font-family:'Great Vibes',cursive;font-size:clamp(28px,9vw,38px);color:#f0c060;line-height:1.3;margin-bottom:6px;}
+.sp-sub{font-family:'Cormorant Garamond',serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#d4a060;margin-bottom:16px;}
+.sp-divl{width:80px;height:1px;background:linear-gradient(to right,transparent,#d08030,transparent);margin:12px auto;}
+.sp-text{font-family:'Cormorant Garamond',serif;font-size:clamp(15px,4vw,17px);color:#f0e8d8;line-height:1.8;margin-bottom:6px;}
+.sp-text-ru{font-family:'Cormorant Garamond',serif;font-size:clamp(14px,3.8vw,16px);color:#e0c898;line-height:1.8;font-style:italic;margin-bottom:6px;}
+.sp-names{font-family:'Playfair Display',serif;font-size:clamp(28px,8vw,36px);font-weight:700;color:#faf0e0;line-height:1.1;margin:8px 0;}
+.sp-amp{font-family:'Great Vibes',cursive;font-size:clamp(24px,7vw,32px);color:#e89030;line-height:1.2;}
+.sp-date{font-family:'Playfair Display',serif;font-size:clamp(14px,4vw,17px);letter-spacing:4px;color:#d4a060;margin:8px 0;}
+.sp-dot{color:#e89030;}
+.sp-detail{font-family:'Cormorant Garamond',serif;font-size:clamp(11px,3vw,13px);letter-spacing:2px;text-transform:uppercase;color:#b08050;margin-top:2px;}
+.sp-emoji-row{font-size:24px;letter-spacing:6px;margin:10px 0;}
+.sp-footer{font-family:'Great Vibes',cursive;font-size:clamp(16px,4.5vw,20px);color:#e89030;margin-top:8px;}
+/* confetti animation */
+@keyframes confetti-fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}100%{transform:translateY(120px) rotate(360deg);opacity:0;}}
+.conf{position:absolute;width:7px;height:7px;border-radius:1px;animation:confetti-fall 2.5s ease-in infinite;}
+
+/* ── FLORES ANIMATIONS ── */
+@keyframes sw1{0%,100%{transform:rotate(0deg)}30%{transform:rotate(4deg)}70%{transform:rotate(-3.5deg)}}
+@keyframes sw2{0%,100%{transform:rotate(0deg)}35%{transform:rotate(-4.5deg)}65%{transform:rotate(3deg)}}
+@keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes dr{0%,100%{transform:translateY(0) rotate(0deg)}40%{transform:translateY(-5px) rotate(2deg)}70%{transform:translateY(3px) rotate(-1.5deg)}}
+@keyframes sw3{0%,100%{transform:rotate(0deg)}25%{transform:rotate(3deg)}75%{transform:rotate(-4deg)}}
+@keyframes pulse-bloom{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
+.a1{animation:sw1 4.2s ease-in-out infinite;}
+.a2{animation:sw2 5.1s ease-in-out infinite;}
+.a3{animation:fl 3.8s ease-in-out infinite;}
+.a4{animation:dr 6.2s ease-in-out infinite;}
+.a5{animation:sw3 4.7s ease-in-out infinite 0.6s;}
+.a6{animation:fl 5s ease-in-out infinite 1s;}
+.a7{animation:sw2 4s ease-in-out infinite 0.3s;}
+.a8{animation:dr 5.5s ease-in-out infinite 1.5s;}
+.a9{animation:pulse-bloom 3.2s ease-in-out infinite 0.8s;}
+.a10{animation:sw1 6s ease-in-out infinite 1.2s;}
+.a11{animation:fl 4.4s ease-in-out infinite 0.5s;}
+.a12{animation:dr 5s ease-in-out infinite 2s;}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ══════════ PANTALLA 1: SELECCIÓN ══════════ -->
+<div id="select-screen">
+  <div style="height:6px"></div>
+  <!-- Flor decorativa naranja en la selección -->
+  <svg width="70" height="66" viewBox="0 0 72 68" style="opacity:0.85;margin-bottom:4px;">
+    <ellipse cx="36" cy="26" rx="14" ry="9" fill="#f0a860" transform="rotate(0 36 26)"/>
+    <ellipse cx="36" cy="26" rx="14" ry="9" fill="#e89840" transform="rotate(60 36 26)"/>
+    <ellipse cx="36" cy="26" rx="14" ry="9" fill="#f4b468" transform="rotate(120 36 26)"/>
+    <circle cx="36" cy="26" r="6" fill="#fff0d0"/>
+    <circle cx="38" cy="23.5" r="1.6" fill="#d07020"/><circle cx="34" cy="23.5" r="1.6" fill="#d07020"/><circle cx="36" cy="21" r="1.6" fill="#c86820"/>
+    <path d="M 22 50 Q 26 37 36 35 Q 46 37 50 50" stroke="#a8c890" stroke-width="1.4" fill="none" opacity="0.6"/>
+    <ellipse cx="17" cy="56" rx="10" ry="7" fill="#f0a850" opacity="0.5" transform="rotate(-30 17 56)"/>
+    <ellipse cx="55" cy="54" rx="10" ry="7" fill="#f4b060" opacity="0.45" transform="rotate(25 55 54)"/>
+  </svg>
+  <p class="sel-title">¡Tenemos una<br>sorpresa para ti!</p>
+  <p class="sel-sub">¿Quién eres tú?</p>
+  <div class="guest-grid">
+    <button type="button" class="guest-btn" data-guest="Andrés">Andrés</button>
+    <button type="button" class="guest-btn" data-guest="Esteban">Esteban</button>
+    <button type="button" class="guest-btn" data-guest="Esther">Esther</button>
+    <button type="button" class="guest-btn" data-guest="Willy">Willy</button>
+    <button type="button" class="guest-btn" data-guest="Migue">Migue</button>
+    <button type="button" class="guest-btn" data-guest="Isaac">Isaac</button>
+    <button type="button" class="guest-btn" data-guest="Luz">Luz</button>
+    <button type="button" class="guest-btn" data-guest="Natalia">Natalia</button>
+    <button type="button" class="guest-btn" data-guest="Olya">Olya & Sergey</button>
+    <button type="button" class="guest-btn" data-guest="Anya">Anya</button>
+  </div>
+</div>
+
+<!-- ══════════ PANTALLA 2: PREGUNTA ══════════ -->
+<div id="question-screen">
+  <button type="button" class="q-back" id="btn-q-back">← Volver</button>
+  <div class="q-envelope-icon">✉️</div>
+  <div class="q-name" id="q-name-display"></div>
+  <div class="q-label" id="q-lang-label">Para abrir tu invitación...</div>
+  <div class="q-question" id="q-question-text"></div>
+  <input class="q-input" id="q-answer" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Tu respuesta...">
+  <button type="button" class="q-btn" id="btn-check-answer">Abrir 💌</button>
+  <div class="q-error" id="q-error"></div>
+</div>
+
+<!-- ══════════ PANTALLA 3: SOBRE ══════════ -->
+<div id="envelope-scene">
+  <div id="guest-label"></div>
+  <div id="envelope-wrap">
+    <svg width="300" height="200" viewBox="0 0 300 200">
+      <!-- Sombra suave -->
+      <ellipse cx="150" cy="197" rx="115" ry="8" fill="#d08030" opacity="0.18"/>
+      <!-- Cuerpo del sobre naranja pastel -->
+      <rect x="10" y="40" width="280" height="160" rx="5" fill="#fde0b0" stroke="#e8a050" stroke-width="1.2"/>
+      <!-- Triángulos laterales más cálidos -->
+      <polygon points="10,40 150,130 10,200" fill="#f8c880" opacity="0.65"/>
+      <polygon points="290,40 150,130 290,200" fill="#f4be70" opacity="0.65"/>
+      <polygon points="10,200 150,130 290,200" fill="#fad098"/>
+      <!-- Flores decorativas en el sobre -->
+      <!-- Flor pequeña izquierda -->
+      <g transform="translate(40,170)">
+        <ellipse cx="0" cy="-6" rx="5" ry="3.5" fill="#a8c8e8" opacity="0.9"/>
+        <ellipse cx="0" cy="-6" rx="5" ry="3.5" fill="#98bee4" transform="rotate(60 0 0)" opacity="0.9"/>
+        <ellipse cx="0" cy="-6" rx="5" ry="3.5" fill="#b0cce8" transform="rotate(120 0 0)" opacity="0.9"/>
+        <circle cx="0" cy="0" r="2.5" fill="#fff0d8"/>
+      </g>
+      <!-- Flor pequeña derecha -->
+      <g transform="translate(258,172)">
+        <ellipse cx="0" cy="-5.5" rx="4.5" ry="3.2" fill="#b8d4f0" opacity="0.9"/>
+        <ellipse cx="0" cy="-5.5" rx="4.5" ry="3.2" fill="#a8ccea" transform="rotate(72 0 0)" opacity="0.9"/>
+        <ellipse cx="0" cy="-5.5" rx="4.5" ry="3.2" fill="#bcd6f0" transform="rotate(144 0 0)" opacity="0.9"/>
+        <circle cx="0" cy="0" r="2.2" fill="#fde8c8"/>
+      </g>
+      <!-- Ramita decorativa -->
+      <path d="M 55 185 Q 60 175 70 172 Q 80 169 85 178" stroke="#a8b898" stroke-width="1.1" fill="none" opacity="0.6"/>
+      <path d="M 213 183 Q 220 172 230 170 Q 240 168 244 178" stroke="#a8b898" stroke-width="1.1" fill="none" opacity="0.55"/>
+      <!-- Solapas del sobre -->
+      <g id="flap">
+        <polygon points="10,40 150,130 290,40" fill="#f0b060" stroke="#e09040" stroke-width="1"/>
+        <!-- Sello decorativo -->
+        <circle cx="150" cy="72" r="17" fill="#fef4e0" stroke="#e8a040" stroke-width="1"/>
+        <!-- Florecita en el sello -->
+        <g transform="translate(150,72)">
+          <ellipse cx="0" cy="-7" rx="5.5" ry="3.8" fill="#d4a0e0" opacity="0.8"/>
+          <ellipse cx="0" cy="-7" rx="5.5" ry="3.8" fill="#c898d8" transform="rotate(60 0 0)" opacity="0.8"/>
+          <ellipse cx="0" cy="-7" rx="5.5" ry="3.8" fill="#d8a4e4" transform="rotate(120 0 0)" opacity="0.8"/>
+          <circle cx="0" cy="0" r="3" fill="#fde8c0"/>
+        </g>
+      </g>
+      <g id="rising-card">
+        <rect x="-42" y="-26" width="84" height="58" rx="2" fill="#fff5e8" stroke="#e8b060" stroke-width="0.9"/>
+        <text x="0" y="-10" text-anchor="middle" font-family="Georgia,serif" font-size="7.5" fill="#c07030" letter-spacing="1">YANA &amp; PABLO</text>
+        <line x1="-28" y1="-3" x2="28" y2="-3" stroke="#e8a050" stroke-width="0.5"/>
+        <text x="0" y="10" text-anchor="middle" font-family="Georgia,serif" font-size="6.5" fill="#d08040" letter-spacing="1">12 · 06 · 2026</text>
+        <text x="0" y="23" text-anchor="middle" font-family="Georgia,serif" font-size="6" fill="#c09060">Barranquilla</text>
+      </g>
+    </svg>
+  </div>
+  <p id="hint">— Tócalo para abrirlo —</p>
+</div>
+
+<!-- ══════════ PANTALLA 4: INVITACIÓN NORMAL ══════════ -->
+<div id="invitation-full">
+  <div class="inv-card">
+    <svg class="inv-fc" viewBox="0 0 340 720" xmlns="http://www.w3.org/2000/svg">
+      <!-- Marco interior sutil -->
+      <rect x="12" y="12" width="316" height="696" rx="1" fill="none" stroke="#e8b060" stroke-width="0.6" opacity="0.5"/>
+      <!-- Decoración de esquinas -->
+      <path d="M 12,40 L 12,12 L 40,12" fill="none" stroke="#e09040" stroke-width="0.8" opacity="0.4"/>
+      <path d="M 300,12 L 328,12 L 328,40" fill="none" stroke="#e09040" stroke-width="0.8" opacity="0.4"/>
+      <path d="M 12,680 L 12,708 L 40,708" fill="none" stroke="#e09040" stroke-width="0.8" opacity="0.4"/>
+      <path d="M 300,708 L 328,708 L 328,680" fill="none" stroke="#e09040" stroke-width="0.8" opacity="0.4"/>
+
+      <!-- IZQUIERDA ARRIBA: Rama con flores azules y blancas -->
+      <g class="a1" style="transform-origin:20px 160px">
+        <path d="M 20 160 Q 14 128 24 96 Q 30 70 16 38" stroke="#a0b890" stroke-width="1.4" fill="none" opacity="0.6"/>
+        <!-- Hoja -->
+        <ellipse cx="8" cy="118" rx="18" ry="7" fill="#b0c898" opacity="0.45" transform="rotate(-40 8 118)"/>
+        <!-- Flor azul grande -->
+        <g transform="translate(16,36)">
+          <ellipse cx="0" cy="-11" rx="10" ry="6.5" fill="#88b8e4"/>
+          <ellipse cx="0" cy="-11" rx="10" ry="6.5" fill="#7eb4e2" transform="rotate(60 0 0)"/>
+          <ellipse cx="0" cy="-11" rx="10" ry="6.5" fill="#90bce6" transform="rotate(120 0 0)"/>
+          <circle cx="0" cy="0" r="4" fill="#fff0d8"/>
+          <circle cx="0" cy="0" r="1.8" fill="#e8a040"/>
+        </g>
+        <!-- Flor blanca media -->
+        <g transform="translate(34,20)">
+          <ellipse cx="0" cy="-9" rx="8.5" ry="5.5" fill="#f0f5ff"/>
+          <ellipse cx="0" cy="-9" rx="8.5" ry="5.5" fill="#e8f2fc" transform="rotate(60 0 0)"/>
+          <ellipse cx="0" cy="-9" rx="8.5" ry="5.5" fill="#edf4fd" transform="rotate(120 0 0)"/>
+          <circle cx="0" cy="0" r="3.5" fill="#fce8c0"/>
+          <circle cx="0" cy="0" r="1.5" fill="#d89030"/>
+        </g>
+        <!-- Flor azul pequeña -->
+        <g transform="translate(6,18)">
+          <ellipse cx="0" cy="-8" rx="7" ry="4.8" fill="#6aa4d8"/>
+          <ellipse cx="0" cy="-8" rx="7" ry="4.8" fill="#74aadc" transform="rotate(60 0 0)"/>
+          <ellipse cx="0" cy="-8" rx="7" ry="4.8" fill="#68a0d6" transform="rotate(120 0 0)"/>
+          <circle cx="0" cy="0" r="3" fill="#fef5e4"/>
+        </g>
+      </g>
+
+      <!-- DERECHA ARRIBA: Flor grande blanca -->
+      <g class="a2" style="transform-origin:315px 150px">
+        <path d="M 315 150 Q 323 116 313 82 Q 307 58 318 24" stroke="#98b490" stroke-width="1.4" fill="none" opacity="0.55"/>
+        <!-- Flor blanca grande 8 pétalos -->
+        <g transform="translate(317,22)">
+          <ellipse cx="0" cy="-16" rx="12" ry="8" fill="#f5f8ff"/>
+          <ellipse cx="0" cy="-16" rx="12" ry="8" fill="#eef4fe" transform="rotate(45 0 0)"/>
+          <ellipse cx="0" cy="-16" rx="12" ry="8" fill="#f2f7ff" transform="rotate(90 0 0)"/>
+          <ellipse cx="0" cy="-16" rx="12" ry="8" fill="#eaf3fd" transform="rotate(135 0 0)"/>
+          <ellipse cx="0" cy="-16" rx="12" ry="8" fill="#f0f6ff" transform="rotate(180 0 0)"/>
+          <ellipse cx="0" cy="-16" rx="12" ry="8" fill="#ecf4fe" transform="rotate(225 0 0)"/>
+          <ellipse cx="0" cy="-16" rx="12" ry="8" fill="#f4f7ff" transform="rotate(270 0 0)"/>
+          <ellipse cx="0" cy="-16" rx="12" ry="8" fill="#eef5fd" transform="rotate(315 0 0)"/>
+          <circle cx="0" cy="0" r="5.5" fill="#fce0a0"/>
+          <circle cx="0" cy="0" r="3" fill="#e89030"/>
+          <circle cx="2" cy="-1.5" r="1" fill="#fff0c0"/>
+          <circle cx="-1.5" cy="-2" r="0.8" fill="#fff0c0"/>
+        </g>
+        <!-- Hojita derecha -->
+        <ellipse cx="328" cy="80" rx="10" ry="5" fill="#a8c888" opacity="0.45" transform="rotate(20 328 80)"/>
+      </g>
+
+      <!-- IZQUIERDA MEDIO: Flor azul mediana -->
+      <g class="a3" style="transform-origin:0px 340px">
+        <path d="M 0 370 Q -5 340 9 310 Q 16 288 4 260" stroke="#88a898" stroke-width="1.3" fill="none" opacity="0.5"/>
+        <!-- Flor azul 6 pétalos grande -->
+        <g transform="translate(4,258)">
+          <ellipse cx="0" cy="-18" rx="13" ry="8.5" fill="#78aadc"/>
+          <ellipse cx="0" cy="-18" rx="13" ry="8.5" fill="#6ea4d8" transform="rotate(60 0 0)"/>
+          <ellipse cx="0" cy="-18" rx="13" ry="8.5" fill="#80b0e0" transform="rotate(120 0 0)"/>
+          <ellipse cx="0" cy="-18" rx="13" ry="8.5" fill="#74a8da" transform="rotate(180 0 0)"/>
+          <ellipse cx="0" cy="-18" rx="13" ry="8.5" fill="#7aaede" transform="rotate(240 0 0)"/>
+          <ellipse cx="0" cy="-18" rx="13" ry="8.5" fill="#6ca2d8" transform="rotate(300 0 0)"/>
+          <circle cx="0" cy="0" r="9" fill="#1e3a52"/>
+          <circle cx="0" cy="0" r="6" fill="#152e44"/>
+          <circle cx="3" cy="-4" r="1.5" fill="#88bce0"/><circle cx="-3" cy="-4" r="1.5" fill="#88bce0"/><circle cx="0" cy="-5.5" r="1.5" fill="#90c0e4"/>
+          <circle cx="4.5" cy="1" r="1.2" fill="#78b0d8"/><circle cx="-4.5" cy="1" r="1.2" fill="#78b0d8"/>
+        </g>
+        <!-- Flor pequeña naranja -->
+        <g transform="translate(24,290)" opacity="0.85">
+          <ellipse cx="0" cy="-7" rx="5.5" ry="4" fill="#f4a850"/>
+          <ellipse cx="0" cy="-7" rx="5.5" ry="4" fill="#ec9e48" transform="rotate(72 0 0)"/>
+          <ellipse cx="0" cy="-7" rx="5.5" ry="4" fill="#f0aa58" transform="rotate(144 0 0)"/>
+          <ellipse cx="0" cy="-7" rx="5.5" ry="4" fill="#e89a44" transform="rotate(216 0 0)"/>
+          <ellipse cx="0" cy="-7" rx="5.5" ry="4" fill="#f2a84e" transform="rotate(288 0 0)"/>
+          <circle cx="0" cy="0" r="3" fill="#fff4e0"/>
+        </g>
+      </g>
+
+      <!-- DERECHA MEDIO: Grupo flores azul+blanca -->
+      <g class="a4" style="transform-origin:340px 390px">
+        <path d="M 346 405 Q 350 375 342 348 Q 338 325 346 298 Q 350 275 340 248" stroke="#90a8a0" stroke-width="1.2" fill="none" opacity="0.55"/>
+        <!-- Flor blanca 6 pétalos -->
+        <g transform="translate(342,246)">
+          <ellipse cx="0" cy="-14" rx="11" ry="7.5" fill="#f0f5ff"/>
+          <ellipse cx="0" cy="-14" rx="11" ry="7.5" fill="#eaf2fc" transform="rotate(60 0 0)"/>
+          <ellipse cx="0" cy="-14" rx="11" ry="7.5" fill="#eef4fe" transform="rotate(120 0 0)"/>
+          <ellipse cx="0" cy="-14" rx="11" ry="7.5" fill="#e8f1fc" transform="rotate(180 0 0)"/>
+          <ellipse cx="0" cy="-14" rx="11" ry="7.5" fill="#ecf3fd" transform="rotate(240 0 0)"/>
+          <ellipse cx="0" cy="-14" rx="11" ry="7.5" fill="#f2f7ff" transform="rotate(300 0 0)"/>
+          <circle cx="0" cy="0" r="4.5" fill="#fcd890"/>
+          <circle cx="0" cy="0" r="2.2" fill="#d88020"/>
+        </g>
+        <!-- Flores azules pequeñas -->
+        <g transform="translate(330,302)">
+          <ellipse cx="0" cy="-6.5" rx="5.5" ry="4" fill="#7ab4e2"/>
+          <ellipse cx="0" cy="-6.5" rx="5.5" ry="4" fill="#70aede" transform="rotate(72 0 0)"/>
+          <ellipse cx="0" cy="-6.5" rx="5.5" ry="4" fill="#7eb6e4" transform="rotate(144 0 0)"/>
+          <ellipse cx="0" cy="-6.5" rx="5.5" ry="4" fill="#72b0e0" transform="rotate(216 0 0)"/>
+          <ellipse cx="0" cy="-6.5" rx="5.5" ry="4" fill="#7ab4e2" transform="rotate(288 0 0)"/>
+          <circle cx="0" cy="0" r="2.8" fill="#fef8ee"/>
+        </g>
+        <g transform="translate(349,328)">
+          <ellipse cx="0" cy="-6" rx="5" ry="3.8" fill="#60a0d4"/>
+          <ellipse cx="0" cy="-6" rx="5" ry="3.8" fill="#6aaad8" transform="rotate(72 0 0)"/>
+          <ellipse cx="0" cy="-6" rx="5" ry="3.8" fill="#64a4d6" transform="rotate(144 0 0)"/>
+          <circle cx="0" cy="0" r="2.8" fill="#fdf0e0"/>
+        </g>
+        <g transform="translate(332,352)">
+          <ellipse cx="0" cy="-6" rx="5" ry="3.8" fill="#90c0e8"/>
+          <ellipse cx="0" cy="-6" rx="5" ry="3.8" fill="#88bce4" transform="rotate(72 0 0)"/>
+          <circle cx="0" cy="0" r="2.8" fill="#fde8c4"/>
+        </g>
+      </g>
+
+      <!-- IZQUIERDA ABAJO: Ramo florido -->
+      <g class="a5" style="transform-origin:20px 650px">
+        <path d="M 20 715 Q 15 682 24 654 Q 28 630 18 604 Q 16 580 26 554" stroke="#98b890" stroke-width="1.4" fill="none" opacity="0.6"/>
+        <!-- Flor blanca -->
+        <g transform="translate(26,552)">
+          <ellipse cx="0" cy="-11" rx="10" ry="7" fill="#f5f8ff"/>
+          <ellipse cx="0" cy="-11" rx="10" ry="7" fill="#eef4fe" transform="rotate(60 0 0)"/>
+          <ellipse cx="0" cy="-11" rx="10" ry="7" fill="#f0f6ff" transform="rotate(120 0 0)"/>
+          <circle cx="0" cy="0" r="4" fill="#fce4a8"/>
+          <circle cx="0" cy="0" r="2" fill="#e09030"/>
+        </g>
+        <!-- Flor azul media -->
+        <g transform="translate(10,574)">
+          <ellipse cx="0" cy="-9.5" rx="9" ry="6.5" fill="#80b4e2"/>
+          <ellipse cx="0" cy="-9.5" rx="9" ry="6.5" fill="#76aedc" transform="rotate(60 0 0)"/>
+          <ellipse cx="0" cy="-9.5" rx="9" ry="6.5" fill="#84b8e4" transform="rotate(120 0 0)"/>
+          <circle cx="0" cy="0" r="3.5" fill="#fde0a0"/>
+        </g>
+        <!-- Flor azul pequeña -->
+        <g transform="translate(34,596)">
+          <ellipse cx="0" cy="-8" rx="8" ry="6" fill="#6aaad8"/>
+          <ellipse cx="0" cy="-8" rx="8" ry="6" fill="#62a4d4" transform="rotate(60 0 0)"/>
+          <ellipse cx="0" cy="-8" rx="8" ry="6" fill="#70aede" transform="rotate(120 0 0)"/>
+          <circle cx="0" cy="0" r="3" fill="#fde8c0"/>
+        </g>
+        <!-- Flor naranja pequeña -->
+        <g transform="translate(12,616)">
+          <ellipse cx="0" cy="-7.5" rx="7" ry="5" fill="#f0a840"/>
+          <ellipse cx="0" cy="-7.5" rx="7" ry="5" fill="#e89838" transform="rotate(72 0 0)"/>
+          <ellipse cx="0" cy="-7.5" rx="7" ry="5" fill="#f2aa48" transform="rotate(144 0 0)"/>
+          <circle cx="0" cy="0" r="2.5" fill="#fff5e0"/>
+        </g>
+      </g>
+
+      <!-- DERECHA ABAJO: Ramo flores -->
+      <g class="a6" style="transform-origin:318px 648px">
+        <path d="M 318 715 Q 325 680 314 650 Q 310 626 320 600 Q 324 576 314 552" stroke="#88b498" stroke-width="1.3" fill="none" opacity="0.55"/>
+        <!-- Flor blanca grande -->
+        <g transform="translate(314,550)">
+          <ellipse cx="0" cy="-11" rx="10" ry="7" fill="#f2f8ff"/>
+          <ellipse cx="0" cy="-11" rx="10" ry="7" fill="#ebf3fe" transform="rotate(60 0 0)"/>
+          <ellipse cx="0" cy="-11" rx="10" ry="7" fill="#eff6ff" transform="rotate(120 0 0)"/>
+          <circle cx="0" cy="0" r="4" fill="#fce4a0"/>
+          <circle cx="0" cy="0" r="2" fill="#d88820"/>
+        </g>
+        <!-- Flor azul -->
+        <g transform="translate(328,570)">
+          <ellipse cx="0" cy="-9.5" rx="9" ry="6.5" fill="#88b8e4"/>
+          <ellipse cx="0" cy="-9.5" rx="9" ry="6.5" fill="#7eb2e0" transform="rotate(60 0 0)"/>
+          <ellipse cx="0" cy="-9.5" rx="9" ry="6.5" fill="#8cbce6" transform="rotate(120 0 0)"/>
+          <circle cx="0" cy="0" r="3.5" fill="#fce8c8"/>
+        </g>
+        <!-- Flor blanca pequeña -->
+        <g transform="translate(302,578)">
+          <ellipse cx="0" cy="-9" rx="8.5" ry="6" fill="#f5f8ff"/>
+          <ellipse cx="0" cy="-9" rx="8.5" ry="6" fill="#eef4fe" transform="rotate(60 0 0)"/>
+          <circle cx="0" cy="0" r="3" fill="#fce4a8"/>
+        </g>
+        <!-- Flor azul oscura -->
+        <g transform="translate(318,598)">
+          <ellipse cx="0" cy="-10" rx="9" ry="6.5" fill="#5898cc"/>
+          <ellipse cx="0" cy="-10" rx="9" ry="6.5" fill="#5090c8" transform="rotate(60 0 0)"/>
+          <ellipse cx="0" cy="-10" rx="9" ry="6.5" fill="#5c9cd0" transform="rotate(120 0 0)"/>
+          <circle cx="0" cy="0" r="3.5" fill="#fde0a0"/>
+        </g>
+      </g>
+
+      <!-- CENTRO ARRIBA: Flores pequeñas decorativas -->
+      <g class="a7" style="transform-origin:170px 12px">
+        <g transform="translate(118,64)">
+          <ellipse cx="0" cy="-6.5" rx="5.5" ry="4" fill="#f5f8ff"/>
+          <ellipse cx="0" cy="-6.5" rx="5.5" ry="4" fill="#eef4fe" transform="rotate(72 0 0)"/>
+          <ellipse cx="0" cy="-6.5" rx="5.5" ry="4" fill="#f0f6ff" transform="rotate(144 0 0)"/>
+          <ellipse cx="0" cy="-6.5" rx="5.5" ry="4" fill="#eaf2fc" transform="rotate(216 0 0)"/>
+          <ellipse cx="0" cy="-6.5" rx="5.5" ry="4" fill="#f3f7ff" transform="rotate(288 0 0)"/>
+          <circle cx="0" cy="0" r="2.5" fill="#fce4a8"/>
+        </g>
+        <g transform="translate(222,64)">
+          <ellipse cx="0" cy="-6.5" rx="5.5" ry="4" fill="#88b8e4"/>
+          <ellipse cx="0" cy="-6.5" rx="5.5" ry="4" fill="#7eb2e0" transform="rotate(72 0 0)"/>
+          <ellipse cx="0" cy="-6.5" rx="5.5" ry="4" fill="#8cbce6" transform="rotate(144 0 0)"/>
+          <ellipse cx="0" cy="-6.5" rx="5.5" ry="4" fill="#80b6e2" transform="rotate(216 0 0)"/>
+          <ellipse cx="0" cy="-6.5" rx="5.5" ry="4" fill="#90bce8" transform="rotate(288 0 0)"/>
+          <circle cx="0" cy="0" r="2.5" fill="#fde8c4"/>
+        </g>
+        <g transform="translate(170,18)">
+          <ellipse cx="0" cy="-6" rx="5" ry="3.8" fill="#f0a848"/>
+          <ellipse cx="0" cy="-6" rx="5" ry="3.8" fill="#e89a40" transform="rotate(72 0 0)"/>
+          <ellipse cx="0" cy="-6" rx="5" ry="3.8" fill="#f2ae54" transform="rotate(144 0 0)"/>
+          <ellipse cx="0" cy="-6" rx="5" ry="3.8" fill="#e8983e" transform="rotate(216 0 0)"/>
+          <ellipse cx="0" cy="-6" rx="5" ry="3.8" fill="#f0a850" transform="rotate(288 0 0)"/>
+          <circle cx="0" cy="0" r="2.2" fill="#fef8ec"/>
+        </g>
+      </g>
+
+      <!-- CENTRO ABAJO: Flores pequeñas -->
+      <g class="a8" style="transform-origin:170px 715px">
+        <g transform="translate(103,703)">
+          <ellipse cx="0" cy="-6.5" rx="5.5" ry="4" fill="#7aafe2"/>
+          <ellipse cx="0" cy="-6.5" rx="5.5" ry="4" fill="#70a8de" transform="rotate(72 0 0)"/>
+          <ellipse cx="0" cy="-6.5" rx="5.5" ry="4" fill="#7cb2e4" transform="rotate(144 0 0)"/>
+          <ellipse cx="0" cy="-6.5" rx="5.5" ry="4" fill="#68a4dc" transform="rotate(216 0 0)"/>
+          <ellipse cx="0" cy="-6.5" rx="5.5" ry="4" fill="#80b4e2" transform="rotate(288 0 0)"/>
+          <circle cx="0" cy="0" r="2.5" fill="#fdf0e4"/>
+        </g>
+        <g transform="translate(170,708)">
+          <ellipse cx="0" cy="-7" rx="6.5" ry="4.5" fill="#f0a848"/>
+          <ellipse cx="0" cy="-7" rx="6.5" ry="4.5" fill="#e89840" transform="rotate(72 0 0)"/>
+          <ellipse cx="0" cy="-7" rx="6.5" ry="4.5" fill="#f2ac52" transform="rotate(144 0 0)"/>
+          <ellipse cx="0" cy="-7" rx="6.5" ry="4.5" fill="#e69a3e" transform="rotate(216 0 0)"/>
+          <ellipse cx="0" cy="-7" rx="6.5" ry="4.5" fill="#f0a84a" transform="rotate(288 0 0)"/>
+          <circle cx="0" cy="0" r="3" fill="#fef5e8"/>
+        </g>
+        <g transform="translate(237,703)">
+          <ellipse cx="0" cy="-6.5" rx="5.5" ry="4" fill="#eef4fe"/>
+          <ellipse cx="0" cy="-6.5" rx="5.5" ry="4" fill="#e6eefc" transform="rotate(72 0 0)"/>
+          <ellipse cx="0" cy="-6.5" rx="5.5" ry="4" fill="#f0f5ff" transform="rotate(144 0 0)"/>
+          <ellipse cx="0" cy="-6.5" rx="5.5" ry="4" fill="#e8f0fc" transform="rotate(216 0 0)"/>
+          <ellipse cx="0" cy="-6.5" rx="5.5" ry="4" fill="#ecf2fe" transform="rotate(288 0 0)"/>
+          <circle cx="0" cy="0" r="2.5" fill="#fce8b8"/>
+        </g>
+      </g>
+
+      <!-- FLORES EXTRA: más flores alrededor para saturar con elegancia -->
+      <!-- Extra izq arriba -->
+      <g class="a9" style="transform-origin:55px 80px">
+        <g transform="translate(50,75)">
+          <ellipse cx="0" cy="-7" rx="6" ry="4.2" fill="#98c0e6"/>
+          <ellipse cx="0" cy="-7" rx="6" ry="4.2" fill="#8ebae2" transform="rotate(72 0 0)"/>
+          <ellipse cx="0" cy="-7" rx="6" ry="4.2" fill="#9cc2e8" transform="rotate(144 0 0)"/>
+          <circle cx="0" cy="0" r="2.8" fill="#fde8c4"/>
+        </g>
+      </g>
+      <!-- Extra der arriba -->
+      <g class="a10" style="transform-origin:280px 82px">
+        <g transform="translate(280,76)">
+          <ellipse cx="0" cy="-6.5" rx="5.8" ry="4" fill="#f8f8ff"/>
+          <ellipse cx="0" cy="-6.5" rx="5.8" ry="4" fill="#f0f2fe" transform="rotate(60 0 0)"/>
+          <ellipse cx="0" cy="-6.5" rx="5.8" ry="4" fill="#f4f6ff" transform="rotate(120 0 0)"/>
+          <circle cx="0" cy="0" r="2.5" fill="#fce0a0"/>
+        </g>
+      </g>
+      <!-- Extra izq centro -->
+      <g class="a11" style="transform-origin:16px 490px">
+        <g transform="translate(14,488)">
+          <ellipse cx="0" cy="-7.5" rx="6.5" ry="4.5" fill="#f2a848"/>
+          <ellipse cx="0" cy="-7.5" rx="6.5" ry="4.5" fill="#eaa040" transform="rotate(72 0 0)"/>
+          <ellipse cx="0" cy="-7.5" rx="6.5" ry="4.5" fill="#f4aa4e" transform="rotate(144 0 0)"/>
+          <circle cx="0" cy="0" r="2.8" fill="#fff8ee"/>
+        </g>
+      </g>
+      <!-- Extra der centro -->
+      <g class="a12" style="transform-origin:327px 490px">
+        <g transform="translate(326,488)">
+          <ellipse cx="0" cy="-7" rx="6" ry="4.2" fill="#6aa4d8"/>
+          <ellipse cx="0" cy="-7" rx="6" ry="4.2" fill="#60a0d4" transform="rotate(72 0 0)"/>
+          <ellipse cx="0" cy="-7" rx="6" ry="4.2" fill="#70a8dc" transform="rotate(144 0 0)"/>
+          <circle cx="0" cy="0" r="2.6" fill="#fde0a8"/>
+        </g>
+      </g>
+
+      <!-- Línea curva decorativa sutil -->
+      <path d="M 28 400 Q 28 155 170 125 Q 312 155 312 400" stroke="#e0a050" stroke-width="0.6" fill="none" opacity="0.18"/>
+    </svg>
+    <div class="inv-cnt">
+      <div id="inv-std-block">
+      <div style="height:40px"></div>
+      <div class="i-gname-top" id="inv-gname-top"></div>
+      <div class="i-invite-line" id="inv-invite-line"></div>
+      <div class="i-warmly">la boda de</div>
+      <div style="height:6px"></div>
+      <div class="i-name">Yana</div>
+      <div class="i-amp">&amp;</div>
+      <div class="i-name">Pablo</div>
+      <div class="i-divl"></div>
+      <div class="i-orn">· · ·</div>
+      <div class="i-date">12 <span class="i-dot">•</span> 06 <span class="i-dot">•</span> 2026</div>
+      <div style="height:7px"></div>
+      <div class="i-at">a las siete de la noche</div>
+      <div class="i-divl"></div>
+      </div>
+      <div id="inv-venue-block">
+      <div class="i-vscr">Restaurante</div>
+      <div class="i-vname">«Déjame que te cuente»</div>
+      <div class="i-vaddr">Cra. 55 #74-95</div>
+      <div class="i-vcity">Barranquilla, Colombia</div>
+      </div>
+      <div id="inv-special-block" style="display:none;width:100%;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 12px;flex:1;">
+        <div id="inv-sp-name" style="font-family:'Great Vibes',cursive;font-size:clamp(38px,11vw,52px);color:#8a3010;font-style:italic;line-height:1.2;margin-bottom:14px;"></div>
+        <div style="width:60px;height:1px;background:linear-gradient(to right,transparent,#e8a060,transparent);margin:0 auto 16px;"></div>
+        <div id="inv-sp-full" style="font-family:'Cormorant Garamond',serif;font-size:clamp(15px,4vw,17px);color:#7a3010;line-height:2;white-space:pre-line;text-align:center;"></div>
+      </div>
+  </div>
+  <button type="button" class="back-btn" id="btn-inv-back">← Volver</button>
+</div>
+
+<!-- ══════════ PANTALLA 5: CARTA ESPECIAL OLYA/ANYA ══════════ -->
+<div id="special-full">
+  <div class="sp-card" id="sp-card-content">
+    <!-- confetti generado por JS -->
+    <div class="sp-stars">✦ ✦ ✦</div>
+    <div class="sp-greeting" id="sp-name-display"></div>
+    <div class="sp-sub" id="sp-sub-text"></div>
+    <div class="sp-divl"></div>
+    <div class="sp-text" id="sp-text1"></div>
+    <div class="sp-text-ru" id="sp-text2"></div>
+    <div class="sp-divl"></div>
+    <div class="sp-emoji-row">💌 🌸 📸 🥂 💃</div>
+    <div class="sp-text" id="sp-text3"></div>
+    <div class="sp-text-ru" id="sp-text4"></div>
+    <div class="sp-divl"></div>
+    <div class="sp-names">Yana<br><span style="font-family:'Great Vibes',cursive;font-size:clamp(22px,6vw,28px);color:#e89030;">&amp;</span><br>Pablo</div>
+    <div class="sp-divl"></div>
+    <div class="sp-date">12 <span class="sp-dot">•</span> 06 <span class="sp-dot">•</span> 2026</div>
+    <div class="sp-detail">Barranquilla, Colombia</div>
+    <div class="sp-divl"></div>
+    <div class="sp-emoji-row">🎉 📷 🎶 💝 🌟</div>
+    <div class="sp-footer" id="sp-footer-text"></div>
+    <div style="height:8px"></div>
+
+  </div>
+  <button type="button" class="back-btn" id="btn-sp-back" style="color:#d4a060;border-color:#604020;margin-top:16px;">← Volver</button>
+</div>
+
+</div><!-- end #app -->
+
+<script>
+var currentGuest = '';
+var envelopeState = 'closed';
+
+var guests = {
+  'Andrés': {
+    question: '¿En qué país estabas cuando tuviste una videollamada con Yana?',
+    answer: 'inglaterra',
+    lang: 'es'
+  },
+  'Esteban': {
+    question: '¿Cuál es tu equipo de fútbol favorito?',
+    answer: 'junior',
+    lang: 'es'
+  },
+  'Esther': {
+    question: '¿Dónde viven tus padres?',
+    answer: 'sincelejo',
+    lang: 'es'
+  },
+  'Willy': {
+    question: '¿En qué universidad estudiaste?',
+    answer: 'universidad del atlantico',
+    lang: 'es'
+  },
+  'Migue': {
+    question: '¿Qué estudias en la universidad?',
+    answer: 'derecho',
+    lang: 'es'
+  },
+  'Isaac': {
+    question: '¿En dónde trabajas?',
+    answer: 'pricemart',
+    lang: 'es'
+  },
+  'Luz': {
+    question: '¿Quién es tu cantante favorito?',
+    answers: ['chayanne','ricardo arjona'],
+    lang: 'es'
+  },
+  'Natalia': {
+    question: '¿Cuál es tu color favorito?',
+    answers: ['rosa','rosado'],
+    lang: 'es'
+  },
+  'Olya': {
+    question: 'Как сказать «шляпа» на испанском? 🎩',
+    answer: 'sombrero',
+    lang: 'ru'
+  },
+  'Anya': {
+    question: 'Как сказать на итальянском «я люблю тебя»? 🇮🇹',
+    answer: 'ti amo',
+    lang: 'ru'
+  }
+};
+
+var inviteLines = {
+  'Andrés': 'estás cordialmente invitado a',
+  'Esteban': 'estás cordialmente invitado a',
+  'Esther': 'estás cordialmente invitada a',
+  'Willy': 'estás cordialmente invitado a',
+  'Migue': 'estás cordialmente invitado a',
+  'Isaac': 'estás cordialmente invitado a',
+  'Luz': 'estás cordialmente invitada a',
+  'Natalia': 'estás cordialmente invitada a',
+  'Olya': 'вы приглашены на свадьбу',
+  'Anya': 'ты приглашена на свадьбу'
+};
+
+var specialContent = {
+  'Olya': {
+    fullText: 'Это онлайн приглашение на нашу свадьбу в субботу 🎊\nХотя расстояние нас разделяет, вы будете с нами в каждом моменте.\n\n💌 🌸 📸 🥂 💃\n\nБудет ОЧЕНЬ много фотографий, видео, и забавных историй, следите за всем онлайн! 📲'
+  },
+  'Anya': {
+    fullText: 'Это особенное приглашение для тебя 💌\nТы далеко, но ты часть нашей истории.\n\nВ субботу мы начинаем новую главу нашей жизни и хотим, чтобы ты разделила это событие с нами!\n\n💌 🌸 📸 🥂 💃\n\nГотовься, будет шквал фотографий, видео и забавных историй! 🎉'
+  }
+};
+
+function norm(s) {
+  return s.toLowerCase().trim()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+}
+
+function tap(el, fn) {
+  if (!el) return;
+  var moved = false;
+  el.addEventListener('touchstart', function(e){ moved = false; }, {passive:true});
+  el.addEventListener('touchmove', function(e){ moved = true; }, {passive:true});
+  el.addEventListener('touchend', function(e){
+    if (!moved) { e.preventDefault(); fn(e); }
+  });
+  el.addEventListener('click', fn);
+}
+
+function showScreen(id) {
+  var screens = ['select-screen','question-screen','envelope-scene','invitation-full','special-full'];
+  for (var i=0;i<screens.length;i++) {
+    document.getElementById(screens[i]).style.display = 'none';
+  }
+  document.getElementById(id).style.display = 'flex';
+  window.scrollTo(0,0);
+}
+
+function selectGuest(name) {
+  currentGuest = name;
+  var g = guests[name];
+  var displayName = name === 'Olya' ? 'Olya & Sergey' : name;
+  document.getElementById('q-name-display').textContent = displayName;
+  document.getElementById('q-question-text').textContent = g.question;
+  document.getElementById('q-answer').value = '';
+  document.getElementById('q-error').textContent = '';
+  var label = g.lang === 'ru' ? 'Чтобы открыть приглашение...' : 'Para abrir tu invitación...';
+  document.getElementById('q-lang-label').textContent = label;
+  var ph = g.lang === 'ru' ? 'Твой ответ...' : 'Tu respuesta...';
+  document.getElementById('q-answer').placeholder = ph;
+  document.getElementById('btn-check-answer').textContent = g.lang === 'ru' ? 'Открыть 💌' : 'Abrir 💌';
+  showScreen('question-screen');
+  setTimeout(function(){ document.getElementById('q-answer').focus(); }, 400);
+}
+
+function checkAnswer() {
+  var g = guests[currentGuest];
+  var val = norm(document.getElementById('q-answer').value);
+  var ok = false;
+  if (g.answer) { ok = (val === norm(g.answer)); }
+  if (g.answers) { for (var i=0;i<g.answers.length;i++) { if (val === norm(g.answers[i])) { ok=true; break; } } }
+  if (!ok) {
+    var msg = g.lang==='ru' ? 'Неверно! Попробуй ещё раз 😉' : '¡Respuesta incorrecta! Inténtalo de nuevo 😉';
+    document.getElementById('q-error').textContent = msg;
+    document.getElementById('q-answer').style.borderColor='#c06070';
+    setTimeout(function(){ document.getElementById('q-answer').style.borderColor='#e8b070'; },1200);
+    return;
+  }
+  document.getElementById('q-error').textContent = '';
+  envelopeState = 'closed';
+  if (g.special) {
+    showSpecial();
+  } else {
+    showEnvelope();
+  }
+}
+
+function showEnvelope() {
+  showScreen('envelope-scene');
+  var lbl = document.getElementById('guest-label');
+  var sc = specialContent[currentGuest];
+  lbl.textContent = sc ? sc.greeting : ('Para ' + (currentGuest === 'Olya' ? 'Olya & Sergey' : currentGuest) + ',');
+  lbl.style.opacity = '0';
+  var wrap = document.getElementById('envelope-wrap');
+  wrap.classList.remove('opening','opened');
+  setTimeout(function(){ lbl.style.opacity='1'; },80);
+}
+
+function openEnvelope() {
+  if (envelopeState==='open') { showInvitation(); return; }
+  if (envelopeState==='opening') return;
+  envelopeState='opening';
+  var wrap = document.getElementById('envelope-wrap');
+  wrap.classList.add('opening');
+  setTimeout(function(){ wrap.classList.add('opened'); envelopeState='open'; },700);
+  setTimeout(function(){ showInvitation(); },1700);
+}
+
+function showInvitation() {
+  var sc = specialContent[currentGuest];
+  var spBlock = document.getElementById('inv-special-block');
+  var venueBlock = document.getElementById('inv-venue-block');
+  var gnameTop = document.getElementById('inv-gname-top');
+  var inviteLine = document.getElementById('inv-invite-line');
+  var stdBlock = document.getElementById('inv-std-block');
+  if (sc) {
+    if (stdBlock) stdBlock.style.display = 'none';
+    if (spBlock) { spBlock.style.display = 'flex'; }
+    if (venueBlock) venueBlock.style.display = 'none';
+    var nameEl = document.getElementById('inv-sp-name');
+    if (nameEl) nameEl.textContent = currentGuest === 'Olya' ? 'Оля и Сергей' : 'Аня';
+    document.getElementById('inv-sp-full').textContent = sc.fullText;
+    launchConfetti();
+  } else {
+    if (stdBlock) stdBlock.style.display = 'block';
+    gnameTop.textContent = currentGuest + ',';
+    inviteLine.textContent = inviteLines[currentGuest] || 'estás cordialmente invitado/a a';
+    if (spBlock) spBlock.style.display = 'none';
+    if (venueBlock) venueBlock.style.display = 'block';
+  }
+  showScreen('invitation-full');
+}
+
+function showSpecial() {
+  var sc = specialContent[currentGuest];
+  document.getElementById('sp-name-display').textContent = sc.greeting || '';
+  document.getElementById('sp-sub-text').textContent = sc.sub || '';
+  document.getElementById('sp-text1').textContent = sc.text1 || '';
+  document.getElementById('sp-text2').textContent = sc.text2 || '';
+  document.getElementById('sp-text3').textContent = sc.text3 || '';
+  document.getElementById('sp-text4').textContent = sc.text4 || '';
+  document.getElementById('sp-footer-text').textContent = sc.footer || '';
+  showScreen('special-full');
+  launchConfetti();
+}
+
+function launchConfetti() {
+  var card = document.getElementById('sp-card-content') || document.querySelector('.inv-card') || document.body;
+  var colors = ['#e89030','#d4a060','#f0c060','#a8c8e4','#c0d8f0','#f4d090','#78aad8'];
+  for (var i=0; i<22; i++) {
+    (function(i){
+      setTimeout(function(){
+        var c = document.createElement('div');
+        c.className='conf';
+        c.style.left = (8 + Math.random()*84)+'%';
+        c.style.top = (Math.random()*25)+'%';
+        c.style.background = colors[Math.floor(Math.random()*colors.length)];
+        c.style.animationDuration = (2+Math.random()*2)+'s';
+        c.style.animationDelay = (Math.random()*1)+'s';
+        c.style.transform = 'rotate('+(Math.random()*360)+'deg)';
+        c.style.borderRadius = Math.random() > 0.5 ? '50%' : '1px';
+        card.appendChild(c);
+        setTimeout(function(){ if(c.parentNode) c.parentNode.removeChild(c); },4200);
+      }, i*110);
+    })(i);
+  }
+}
+
+function goBack() {
+  envelopeState='closed';
+  var wrap = document.getElementById('envelope-wrap');
+  if(wrap) wrap.classList.remove('opening','opened');
+  showScreen('select-screen');
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  // Guest buttons
+  var guestBtns = document.querySelectorAll('.guest-btn');
+  for (var i = 0; i < guestBtns.length; i++) {
+    (function(btn){
+      var guestName = btn.getAttribute('data-guest');
+      tap(btn, function(e){ selectGuest(guestName); });
+    })(guestBtns[i]);
+  }
+
+  // Back from question screen
+  tap(document.getElementById('btn-q-back'), function(){ showScreen('select-screen'); });
+
+  // Check answer button
+  tap(document.getElementById('btn-check-answer'), function(){ checkAnswer(); });
+
+  // Envelope tap
+  tap(document.getElementById('envelope-wrap'), function(){ openEnvelope(); });
+
+  // Back from invitation
+  tap(document.getElementById('btn-inv-back'), function(){ goBack(); });
+
+  // Back from special
+  tap(document.getElementById('btn-sp-back'), function(){ goBack(); });
+
+  // Enter key triggers check
+  document.getElementById('q-answer').addEventListener('keydown', function(e){
+    if(e.key==='Enter') checkAnswer();
+  });
+});
+</script>
+</body>
+</html>
